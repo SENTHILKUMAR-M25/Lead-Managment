@@ -15,6 +15,7 @@ import Sidebar from "./Components/Sidebar";
 import ProtectedRoute from "./Components/ProtectedRoute";
 
 import { useSelector } from "react-redux";
+import LeadDetails from "./Pages/LeadDetail";
 
 const AppLayout = ({ children }) => {
   return (
@@ -112,6 +113,16 @@ const App = () => {
             </ProtectedRoute>
           }
         />
+        <Route
+  path="/leads/:id"
+  element={
+    <ProtectedRoute>
+      <AppLayout>
+        <LeadDetails />
+      </AppLayout>
+    </ProtectedRoute>
+  }
+/>
 
         {/* Default Redirect */}
         <Route
