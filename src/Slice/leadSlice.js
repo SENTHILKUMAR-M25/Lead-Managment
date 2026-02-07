@@ -1,41 +1,77 @@
+
 import { createSlice } from "@reduxjs/toolkit";
 
 const leadSlice = createSlice({
   name: "leads",
   initialState: [],
   reducers: {
+
+    /* ADD LEAD */
     addLead: (state, action) => {
-      state.push(action.payload);
+      state.push({
+        ...action.payload,
+        updatedBy: action.payload.updatedBy || null,
+        updatedAt: action.payload.updatedAt || null,
+        history: [] // initialize empty history array
+      });
     },
 
+    /* FULL UPDATE */
     updateLead: (state, action) => {
-      const index = state.findIndex(l => l.id === action.payload.id);
-      if (index !== -1) {
-        state[index] = {
-          ...state[index],
-          ...action.payload,
-          updatedAt: new Date().toISOString(),
-        };
-      }
-    },
-
-    updateLeadStatus: (state, action) => {
       const lead = state.find(l => l.id === action.payload.id);
       if (lead) {
-        lead.status = action.payload.status;
-        lead.updatedBy = action.payload.updatedBy;
-        lead.updatedAt = action.payload.updatedAt;
+        Object.assign(lead, {
+          ...action.payload,
+          updatedAt: new Date().toISOString(),
+          updatedBy: action.payload.updatedBy ?? lead.updatedBy
+        });
+
+        // Add to history
+        lead.history.push({
+          action: "Lead details updated",
+          date: new Date().toLocaleString(),
+          updatedBy: action.payload.updatedBy ?? lead.updatedBy,
+          data: action.payload
+        });
       }
     },
 
-    /* ✅ FOLLOW-UP UPDATE */
+    /* STATUS UPDATE */
+    updateLeadStatus: (state, action) => {
+      const { id, status, updatedBy } = action.payload;
+      const lead = state.find(l => l.id === id);
+      if (lead) {
+        lead.status = status;
+        lead.updatedBy = updatedBy ?? lead.updatedBy;
+        lead.updatedAt = new Date().toISOString();
+
+        // Add to history
+        lead.history.push({
+          action: `Status changed to "${status}"`,
+          date: new Date().toLocaleString(),
+          updatedBy: updatedBy ?? lead.updatedBy,
+          data: { status }
+        });
+      }
+    },
+
+    /* FOLLOW-UP / NOTES */
     updateLeadProgress: (state, action) => {
-      const { id, followUp, details } = action.payload;
+      const { id, followUp, details, updatedBy } = action.payload;
       const lead = state.find(l => l.id === id);
       if (lead) {
         lead.followUp = followUp;
         lead.details = details;
         lead.updatedAt = new Date().toISOString();
+        if (updatedBy) lead.updatedBy = updatedBy;
+
+        // Add to history
+        lead.history.push({
+          action: "Follow-up / Notes updated",
+          date: new Date().toLocaleString(),
+          updatedBy: updatedBy ?? lead.updatedBy,
+          data: { followUp, details }
+        });
       }
     }
   }
@@ -43,8 +79,8 @@ const leadSlice = createSlice({
 
 export const {
   addLead,
-  updateLeadStatus,
   updateLead,
+  updateLeadStatus,
   updateLeadProgress
 } = leadSlice.actions;
 

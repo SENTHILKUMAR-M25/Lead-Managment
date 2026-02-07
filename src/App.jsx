@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, Link } from "react-router-dom";
 
 // Pages
 import Login from "./Pages/Login";
@@ -16,6 +16,7 @@ import ProtectedRoute from "./Components/ProtectedRoute";
 
 import { useSelector } from "react-redux";
 import LeadDetails from "./Pages/LeadDetail";
+import LeadHistory from "./Pages/LeadHistory";
 
 const AppLayout = ({ children }) => {
   return (
@@ -114,15 +115,27 @@ const App = () => {
           }
         />
         <Route
-  path="/leads/:id"
-  element={
-    <ProtectedRoute>
-      <AppLayout>
-        <LeadDetails />
-      </AppLayout>
-    </ProtectedRoute>
-  }
-/>
+          path="/leads/:id"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <LeadDetails />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/leadhistory/:id"
+          element={
+            <ProtectedRoute>
+              <AppLayout>
+                <LeadHistory />
+              </AppLayout>
+            </ProtectedRoute>
+          }
+        />
+
+
 
         {/* Default Redirect */}
         <Route

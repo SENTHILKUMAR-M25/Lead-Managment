@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from "uuid";
 import { Lock, User, LogIn, ShieldCheck } from "lucide-react";
 
 const Login = () => {
-  const [username, setUsername] = useState("");
+  const [username, setUsername] = useState("");                                     
   const [password, setPassword] = useState("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
